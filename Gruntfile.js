@@ -58,9 +58,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-cov');
   grunt.loadNpmTasks('grunt-jsdoc-to-markdown');
 
+  grunt.loadTasks('tasks');
+
   grunt.registerTask('lint', ['eslint']);
   grunt.registerTask('test', ['mochacov:test'].concat(process.env.CI ? ['mochacov:ciCoverage'] : []));
   grunt.registerTask('coverage', ['mochacov:coverage']);
-  grunt.registerTask('doc', ['jsdoc2md']);
+  grunt.registerTask('doc', ['jsdoc2md', 'fixdocs']);
   grunt.registerTask('default', ['lint', 'test']);
 };
