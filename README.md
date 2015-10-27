@@ -1,17 +1,17 @@
-# CallbackManager
+# Simple CallbackManager
 
-A class for managing asynchronous callbacks in JavaScript
+A class for managing simple asynchronous callbacks in JavaScript
 
-[![NPM Version](https://img.shields.io/npm/v/callback-manager.svg)](https://www.npmjs.com/package/callback-manager)
-[![Build Status](https://travis-ci.org/woollybogger/callback-manager.svg?branch=master)](https://travis-ci.org/woollybogger/callback-manager)
-[![Coverage Status](https://coveralls.io/repos/woollybogger/callback-manager/badge.svg?branch=master)](https://coveralls.io/r/woollybogger/callback-manager?branch=master)
-[![devDependency Status](https://david-dm.org/woollybogger/callback-manager/dev-status.svg)](https://david-dm.org/woollybogger/callback-manager#info=devDependencies)
+[![NPM Version](https://img.shields.io/npm/v/simple-callback-manager.svg)](https://www.npmjs.com/package/simple-callback-manager)
+[![Build Status](https://travis-ci.org/woollybogger/simple-callback-manager.svg?branch=master)](https://travis-ci.org/woollybogger/simple-callback-manager)
+[![Coverage Status](https://coveralls.io/repos/woollybogger/simple-callback-manager/badge.svg?branch=master)](https://coveralls.io/r/woollybogger/simple-callback-manager?branch=master)
+[![devDependency Status](https://david-dm.org/woollybogger/simple-callback-manager/dev-status.svg)](https://david-dm.org/woollybogger/simple-callback-manager#info=devDependencies)
 
 
 ## Installation
 
 ```sh
-npm install callback-manager --save
+npm install simple-callback-manager --save
 ```
 
 
@@ -41,7 +41,7 @@ Creates a new CallbackManager.
 
 **Example**
 ```js
-var CallbackManager = require('callback-manager');
+var CallbackManager = require('simple-callback-manager');
 var cbManager = new CallbackManager(function(err) {
   if (err) throw err;
   console.log('Done!');

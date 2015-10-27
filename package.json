@@ -1,10 +1,10 @@
 {
-  "name": "callback-manager",
+  "name": "simple-callback-manager",
   "version": "1.0.0",
-  "description": "A class for managing asynchronous callbacks in JavaScript",
-  "main": "callback-manager.js",
+  "description": "A class for managing simple asynchronous callbacks in JavaScript",
+  "main": "simple-callback-manager.js",
   "files": [
-    "callback-manager.js",
+    "simple-callback-manager.js",
     "LICENSE.txt"
   ],
   "scripts": {
@@ -12,24 +12,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/woollybogger/node-callback-manager.git"
+    "url": "git+https://github.com/woollybogger/simple-callback-manager.git"
   },
   "keywords": [
     "callback",
     "manager",
     "asynchronous",
+    "simple",
     "class"
   ],
   "author": "Nathan Woltman <nwoltman@outlook.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/woollybogger/node-callback-manager/issues"
+    "url": "https://github.com/woollybogger/simple-callback-manager/issues"
   },
-  "homepage": "https://github.com/woollybogger/node-callback-manager#readme",
+  "homepage": "https://github.com/woollybogger/simple-callback-manager#readme",
   "config": {
     "blanket": {
       "pattern": [
-        "callback-manager.js"
+        "simple-callback-manager.js"
       ]
     }
   },
