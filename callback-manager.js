@@ -1,8 +1,7 @@
 'use strict';
 
-function CallbackManager(callback, continueOnError) {
+function CallbackManager(callback) {
   var _this = this;
-  var lastError = null;
 
   this._count = 0;
 
@@ -11,21 +10,15 @@ function CallbackManager(callback, continueOnError) {
       return;
     }
 
-    _this._count--;
-
     if (error && error instanceof Error) {
-      lastError = error;
-      if (!continueOnError) {
-        _this._count = 0;
-      }
-    }
-
-    if (_this._count !== 0) {
+      _this.abort();
+      callback(error);
       return;
     }
 
-    callback(lastError);
-    lastError = null;
+    if (--_this._count === 0) {
+      callback(null);
+    }
   };
 }
 

@@ -49,7 +49,7 @@ describe('CallbackManager', function() {
     numCalls.should.equal(1);
   });
 
-  it('should invoke the callback when the first error occurs by default', function(done) {
+  it('should invoke the callback when the first error occurs', function(done) {
     var firstError = new Error('First');
     var otherError = new Error('Other');
 
@@ -67,25 +67,6 @@ describe('CallbackManager', function() {
     process.nextTick(callbackManager.getCallback().bind(null, otherError));
   });
 
-  it('should wait for all async callbacks even if an error occurs when continueOnError is true', function(done) {
-    var firstError = new Error('First');
-    var secondError = new Error('Second');
-    var lastError = new Error('Last');
-
-    var callbackManager = new CallbackManager(function(err) {
-      if (err !== lastError) {
-        throw new Error('Did not wait for all callbacks to be called');
-      }
-      done();
-    }, true);
-
-    process.nextTick(callbackManager.getCallback());
-    process.nextTick(callbackManager.getCallback().bind(null, firstError));
-    process.nextTick(callbackManager.getCallback().bind(null, secondError));
-    process.nextTick(callbackManager.getCallback());
-    process.nextTick(callbackManager.getCallback().bind(null, lastError));
-  });
-
   it('should not invoke the callback with a value if a non-error value was encountered', function(done) {
     var callbackManager = new CallbackManager(function(err) {
       if (err) {
@@ -100,7 +81,6 @@ describe('CallbackManager', function() {
     process.nextTick(callbackManager.getCallback());
     process.nextTick(callbackManager.getCallback().bind(null, 'error'));
   });
-
 
   it('should be reusable, even after an error', function(done) {
     var expectedErrValue = new Error();
@@ -171,4 +151,5 @@ describe('CallbackManager', function() {
     });
 
   });
+
 });
