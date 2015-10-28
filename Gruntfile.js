@@ -61,7 +61,7 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
   grunt.registerTask('lint', ['eslint']);
-  grunt.registerTask('test', ['mochacov:test'].concat(process.env.CI ? ['mochacov:ciCoverage'] : []));
+  grunt.registerTask('test', ['mochacov:test'].concat(process.env.CI ? [/* 'mochacov:ciCoverage' */] : []));
   grunt.registerTask('coverage', ['mochacov:coverage']);
   grunt.registerTask('doc', ['jsdoc2md', 'fixdocs']);
   grunt.registerTask('default', ['lint', 'test']);
