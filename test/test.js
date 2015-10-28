@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable prefer-arrow-callback */
+
 var CallbackManager = require('../');
 
 describe('CallbackManager', function() {
