@@ -20,23 +20,21 @@ class CallbackManager {
    * setTimeout(cbManager.registerCallback(), 300);
    */
   constructor(callback) {
-    var _this = this;
-
     this._callback = callback;
     this._count = 0;
 
-    this._intermediaryCallback = function(error) {
-      if (_this._count === 0) {
+    this._intermediaryCallback = error => {
+      if (this._count === 0) {
         return;
       }
 
       if (error && error instanceof Error) {
-        _this.abort();
+        this.abort();
         callback(error);
         return;
       }
 
-      if (--_this._count === 0) {
+      if (--this._count === 0) {
         callback(null);
       }
     };

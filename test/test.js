@@ -1,13 +1,11 @@
 'use strict';
 
-/* eslint-disable prefer-arrow-callback */
-
 const CallbackManager = require('../');
 const assert = require('assert');
 
-describe('CallbackManager', function() {
+describe('CallbackManager', () => {
 
-  it('should wait for all generated callbacks to be invoked before invoking the provided callback', function() {
+  it('should wait for all generated callbacks to be invoked before invoking the provided callback', () => {
     var called = false;
     var callbackManager = new CallbackManager(function() {
       called = true;
@@ -34,7 +32,7 @@ describe('CallbackManager', function() {
     called.should.equal(true);
   });
 
-  it('should only invoke the provided callback once', function() {
+  it('should only invoke the provided callback once', () => {
     var numCalls = 0;
     var callbackManager = new CallbackManager(function() {
       numCalls++;
@@ -52,7 +50,7 @@ describe('CallbackManager', function() {
     numCalls.should.equal(1);
   });
 
-  it('should invoke the callback when the first error occurs', function(done) {
+  it('should invoke the callback when the first error occurs', done => {
     var firstError = new Error('First');
     var otherError = new Error('Other');
 
@@ -70,7 +68,7 @@ describe('CallbackManager', function() {
     process.nextTick(callbackManager.registerCallback().bind(null, otherError));
   });
 
-  it('should not invoke the callback with a value if a non-error value was encountered', function(done) {
+  it('should not invoke the callback with a value if a non-error value was encountered', done => {
     var callbackManager = new CallbackManager(function(err) {
       if (err) {
         throw new Error('Should not have been invoked with an error value');
@@ -85,7 +83,7 @@ describe('CallbackManager', function() {
     process.nextTick(callbackManager.registerCallback().bind(null, 'error'));
   });
 
-  it('should be reusable, even after an error', function(done) {
+  it('should be reusable, even after an error', done => {
     var expectedErrValue = new Error();
     var callbackManager = new CallbackManager(function(err) {
       if (err !== expectedErrValue) {
@@ -106,29 +104,26 @@ describe('CallbackManager', function() {
   });
 
 
-  describe('#callback', function() {
+  describe('#callback', () => {
 
-    it('should be the original callback passed to the constructor', function() {
+    it('should be the original callback passed to the constructor', () => {
       function callback() {}
       var callbackManager = new CallbackManager(callback);
       callbackManager.callback.should.equal(callback);
     });
 
-    it('should not be modifiable', function() {
+    it('should not be modifiable', () => {
       function callback() {}
       var callbackManager = new CallbackManager(callback);
-      callbackManager.callback.should.equal(callback);
-      assert.throws(function() {
-        callbackManager.callback = 1;
-      }, TypeError);
+      assert.throws(() => callbackManager.callback = 1, TypeError);
     });
 
   });
 
 
-  describe('#registerCallback()', function() {
+  describe('#registerCallback()', () => {
 
-    it('should return a function', function() {
+    it('should return a function', () => {
       var callbackManager = new CallbackManager(function() {});
       callbackManager.registerCallback().should.be.a.type('function');
     });
@@ -136,9 +131,9 @@ describe('CallbackManager', function() {
   });
 
 
-  describe('#getCount()', function() {
+  describe('#getCount()', () => {
 
-    it('should return the number of callbacks currently waiting to be called', function(done) {
+    it('should return the number of callbacks currently waiting to be called', done => {
       var callbackManager = new CallbackManager(done);
 
       callbackManager.getCount().should.equal(0);
@@ -147,9 +142,7 @@ describe('CallbackManager', function() {
       callbackManager.getCount().should.equal(1);
 
       process.nextTick(callbackManager.registerCallback());
-      process.nextTick(function() {
-        callbackManager.getCount().should.equal(1); // Runs after the first 2 callbacks are called
-      });
+      process.nextTick(() => callbackManager.getCount().should.equal(1));
       process.nextTick(callbackManager.registerCallback());
       callbackManager.getCount().should.equal(3);
     });
@@ -157,17 +150,15 @@ describe('CallbackManager', function() {
   });
 
 
-  describe('#abort()', function() {
+  describe('#abort()', () => {
 
-    it('should prevent the provided callback from being called', function(done) {
+    it('should prevent the provided callback from being called', done => {
       var callbackManager = new CallbackManager(function() {
         throw new Error('Callback not aborted');
       });
 
       process.nextTick(callbackManager.registerCallback());
-      process.nextTick(function() {
-        callbackManager.abort();
-      });
+      process.nextTick(() => callbackManager.abort());
       process.nextTick(callbackManager.registerCallback());
       process.nextTick(callbackManager.registerCallback());
       process.nextTick(done);
