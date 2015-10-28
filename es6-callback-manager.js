@@ -15,16 +15,17 @@ class CallbackManager {
    *   if (err) throw err;
    *   console.log('Done!');
    * });
-   * setTimeout(cbManager.getNewCallback(), 200);
-   * setTimeout(cbManager.getNewCallback(), 100);
-   * setTimeout(cbManager.getNewCallback(), 300);
+   * setTimeout(cbManager.registerCallback(), 200);
+   * setTimeout(cbManager.registerCallback(), 100);
+   * setTimeout(cbManager.registerCallback(), 300);
    */
   constructor(callback) {
     var _this = this;
 
+    this._callback = callback;
     this._count = 0;
 
-    this._callback = function(error) {
+    this._intermediaryCallback = function(error) {
       if (_this._count === 0) {
         return;
       }
@@ -42,6 +43,15 @@ class CallbackManager {
   }
 
   /**
+   * The callback passed to the constructor. Is read-only.
+   *
+   * @member {function} CallbackManager#callback
+   */
+  get callback() {
+    return this._callback;
+  }
+
+  /**
    * Aborts the callback sequence, preventing the original callback from being
    * invoked once all intermediary callbacks have been invoked.
    *
@@ -50,7 +60,7 @@ class CallbackManager {
    * var cbManager = new CallbackManager(function() {
    *   console.log('This is never called');
    * });
-   * setTimeout(cbManager.getNewCallback(), 100);
+   * setTimeout(cbManager.registerCallback(), 100);
    * setTimeout(function() {
    *   cbManager.abort();
    * }, 50);
@@ -61,7 +71,7 @@ class CallbackManager {
 
   /**
    * Returns an intermediary callback and increases the number of callbacks to
-   * wait for until original the callback can be invoked.
+   * wait for until the original callback will be invoked.
    *
    * @returns {function} An intermediary callback that, when invoked, decreases
    *     the number of callbacks to wait for. If it is the last callback being
@@ -70,18 +80,18 @@ class CallbackManager {
    *     immediately with the `Error`.
    * @example
    * var cbManager = new CallbackManager(callback);
-   * process.nextTick(cbManager.getNewCallback());
+   * process.nextTick(cbManager.registerCallback());
    *
-   * var cb = cbManager.getNewCallback();
+   * var cb = cbManager.registerCallback();
    * cb('error'); // Does nothing since a string is not an Error object
    *
    * var error = new Error();
-   * cb = cbManager.getNewCallback();
+   * cb = cbManager.registerCallback();
    * cb(error); // Stops waiting for other callbacks and calls callback(error)
    */
-  getNewCallback() {
+  registerCallback() {
     this._count++;
-    return this._callback;
+    return this._intermediaryCallback;
   }
 
   /**
@@ -92,9 +102,9 @@ class CallbackManager {
    * var cbManager = new CallbackManager(function() {
    *   cbManager.getCount(); // -> 0
    * });
-   * process.nextTick(cbManager.getNewCallback());
+   * process.nextTick(cbManager.registerCallback());
    * cbManager.getCount(); // -> 1
-   * process.nextTick(cbManager.getNewCallback());
+   * process.nextTick(cbManager.registerCallback());
    * cbManager.getCount(); // -> 2
    */
   getCount() {

@@ -2,7 +2,8 @@
 
 /* eslint-disable prefer-arrow-callback */
 
-var CallbackManager = require('../');
+const CallbackManager = require('../');
+const assert = require('assert');
 
 describe('CallbackManager', function() {
 
@@ -11,9 +12,9 @@ describe('CallbackManager', function() {
     var callbackManager = new CallbackManager(function() {
       called = true;
     });
-    var cb1 = callbackManager.getNewCallback();
-    var cb2 = callbackManager.getNewCallback();
-    var cb3 = callbackManager.getNewCallback();
+    var cb1 = callbackManager.registerCallback();
+    var cb2 = callbackManager.registerCallback();
+    var cb3 = callbackManager.registerCallback();
 
     cb1();
     called.should.equal(false);
@@ -23,8 +24,8 @@ describe('CallbackManager', function() {
     called.should.equal(true);
 
     called = false;
-    cb1 = callbackManager.getNewCallback();
-    cb2 = callbackManager.getNewCallback();
+    cb1 = callbackManager.registerCallback();
+    cb2 = callbackManager.registerCallback();
 
     // Order doesn't matter
     cb2();
@@ -38,8 +39,8 @@ describe('CallbackManager', function() {
     var callbackManager = new CallbackManager(function() {
       numCalls++;
     });
-    var cb1 = callbackManager.getNewCallback();
-    var cb2 = callbackManager.getNewCallback();
+    var cb1 = callbackManager.registerCallback();
+    var cb2 = callbackManager.registerCallback();
 
     cb1();
     numCalls.should.equal(0);
@@ -62,11 +63,11 @@ describe('CallbackManager', function() {
       done();
     });
 
-    process.nextTick(callbackManager.getNewCallback());
-    process.nextTick(callbackManager.getNewCallback().bind(null, firstError));
-    process.nextTick(callbackManager.getNewCallback().bind(null, otherError));
-    process.nextTick(callbackManager.getNewCallback());
-    process.nextTick(callbackManager.getNewCallback().bind(null, otherError));
+    process.nextTick(callbackManager.registerCallback());
+    process.nextTick(callbackManager.registerCallback().bind(null, firstError));
+    process.nextTick(callbackManager.registerCallback().bind(null, otherError));
+    process.nextTick(callbackManager.registerCallback());
+    process.nextTick(callbackManager.registerCallback().bind(null, otherError));
   });
 
   it('should not invoke the callback with a value if a non-error value was encountered', function(done) {
@@ -77,11 +78,11 @@ describe('CallbackManager', function() {
       done();
     });
 
-    process.nextTick(callbackManager.getNewCallback());
-    process.nextTick(callbackManager.getNewCallback().bind(null, true));
-    process.nextTick(callbackManager.getNewCallback().bind(null, 10));
-    process.nextTick(callbackManager.getNewCallback());
-    process.nextTick(callbackManager.getNewCallback().bind(null, 'error'));
+    process.nextTick(callbackManager.registerCallback());
+    process.nextTick(callbackManager.registerCallback().bind(null, true));
+    process.nextTick(callbackManager.registerCallback().bind(null, 10));
+    process.nextTick(callbackManager.registerCallback());
+    process.nextTick(callbackManager.registerCallback().bind(null, 'error'));
   });
 
   it('should be reusable, even after an error', function(done) {
@@ -92,24 +93,44 @@ describe('CallbackManager', function() {
       }
       if (err) {
         expectedErrValue = null;
-        process.nextTick(callbackManager.getNewCallback());
-        process.nextTick(callbackManager.getNewCallback());
+        process.nextTick(callbackManager.registerCallback());
+        process.nextTick(callbackManager.registerCallback());
       } else {
         done();
       }
     });
 
-    process.nextTick(callbackManager.getNewCallback());
-    process.nextTick(callbackManager.getNewCallback().bind(null, expectedErrValue));
-    process.nextTick(callbackManager.getNewCallback());
+    process.nextTick(callbackManager.registerCallback());
+    process.nextTick(callbackManager.registerCallback().bind(null, expectedErrValue));
+    process.nextTick(callbackManager.registerCallback());
   });
 
 
-  describe('#getNewCallback()', function() {
+  describe('#callback', function() {
+
+    it('should be the original callback passed to the constructor', function() {
+      function callback() {}
+      var callbackManager = new CallbackManager(callback);
+      callbackManager.callback.should.equal(callback);
+    });
+
+    it('should not be modifiable', function() {
+      function callback() {}
+      var callbackManager = new CallbackManager(callback);
+      callbackManager.callback.should.equal(callback);
+      assert.throws(function() {
+        callbackManager.callback = 1;
+      }, TypeError);
+    });
+
+  });
+
+
+  describe('#registerCallback()', function() {
 
     it('should return a function', function() {
       var callbackManager = new CallbackManager(function() {});
-      callbackManager.getNewCallback().should.be.a.type('function');
+      callbackManager.registerCallback().should.be.a.type('function');
     });
 
   });
@@ -122,14 +143,14 @@ describe('CallbackManager', function() {
 
       callbackManager.getCount().should.equal(0);
 
-      process.nextTick(callbackManager.getNewCallback());
+      process.nextTick(callbackManager.registerCallback());
       callbackManager.getCount().should.equal(1);
 
-      process.nextTick(callbackManager.getNewCallback());
+      process.nextTick(callbackManager.registerCallback());
       process.nextTick(function() {
         callbackManager.getCount().should.equal(1); // Runs after the first 2 callbacks are called
       });
-      process.nextTick(callbackManager.getNewCallback());
+      process.nextTick(callbackManager.registerCallback());
       callbackManager.getCount().should.equal(3);
     });
 
@@ -143,12 +164,12 @@ describe('CallbackManager', function() {
         throw new Error('Callback not aborted');
       });
 
-      process.nextTick(callbackManager.getNewCallback());
+      process.nextTick(callbackManager.registerCallback());
       process.nextTick(function() {
         callbackManager.abort();
       });
-      process.nextTick(callbackManager.getNewCallback());
-      process.nextTick(callbackManager.getNewCallback());
+      process.nextTick(callbackManager.registerCallback());
+      process.nextTick(callbackManager.registerCallback());
       process.nextTick(done);
     });
 
