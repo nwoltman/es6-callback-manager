@@ -15,6 +15,11 @@ npm install es6-callback-manager --save
 ```
 
 
+## Transpiling
+
+This module uses ECMAScript 2015 syntax (more widely known as ES6). If you need to use this module in an environment that only supports ES5 (such as a browser or an older version of Node.js), you'll need to transpile it from ES6 to ES5 using a transpiler such as [Babel](https://babeljs.io/).
+
+
 ## API Reference
 
 <a name="CallbackManager"></a>
@@ -22,9 +27,10 @@ npm install es6-callback-manager --save
 
 * [CallbackManager](#CallbackManager)
   * [new CallbackManager(callback)](#new_CallbackManager_new)
-  * [.abort()](#CallbackManager+abort) ⇒ <code>void</code>
+  * [.callback](#CallbackManager+callback) : <code>function</code>
+  * [.registerCallback()](#CallbackManager+registerCallback) ⇒ <code>function</code>
   * [.getCount()](#CallbackManager+getCount) ⇒ <code>number</code>
-  * [.getNewCallback()](#CallbackManager+getNewCallback) ⇒ <code>function</code>
+  * [.abort()](#CallbackManager+abort) ⇒ <code>void</code>
 
 
 ---
@@ -46,9 +52,60 @@ var cbManager = new CallbackManager(function(err) {
   if (err) throw err;
   console.log('Done!');
 });
-setTimeout(cbManager.getNewCallback(), 200);
-setTimeout(cbManager.getNewCallback(), 100);
-setTimeout(cbManager.getNewCallback(), 300);
+setTimeout(cbManager.registerCallback(), 200);
+setTimeout(cbManager.registerCallback(), 100);
+setTimeout(cbManager.registerCallback(), 300);
+```
+
+---
+
+<a name="CallbackManager+callback"></a>
+### callbackManager.callback : <code>function</code>
+The callback passed to the constructor. Is read-only.
+
+
+---
+
+<a name="CallbackManager+registerCallback"></a>
+### callbackManager.registerCallback() ⇒ <code>function</code>
+Returns an intermediary callback and increases the number of callbacks to
+wait for until the original callback will be invoked.
+
+**Returns**: <code>function</code> - An intermediary callback that, when invoked, decreases
+    the number of callbacks to wait for. If it is the last callback being
+    waited on, it invokes the original callback. If it is called with an
+    `Error` as the first argument, it invokes the original callback
+    immediately with the `Error`.  
+
+**Example**
+```js
+var cbManager = new CallbackManager(callback);
+process.nextTick(cbManager.registerCallback());
+
+var cb = cbManager.registerCallback();
+cb('error'); // Does nothing since a string is not an Error object
+
+var error = new Error();
+cb = cbManager.registerCallback();
+cb(error); // Stops waiting for other callbacks and calls callback(error)
+```
+
+---
+
+<a name="CallbackManager+getCount"></a>
+### callbackManager.getCount() ⇒ <code>number</code>
+Returns the number of intermediary callbacks currently being waited on.
+
+
+**Example**
+```js
+var cbManager = new CallbackManager(function() {
+  cbManager.getCount(); // -> 0
+});
+process.nextTick(cbManager.registerCallback());
+cbManager.getCount(); // -> 1
+process.nextTick(cbManager.registerCallback());
+cbManager.getCount(); // -> 2
 ```
 
 ---
@@ -64,54 +121,10 @@ invoked once all intermediary callbacks have been invoked.
 var cbManager = new CallbackManager(function() {
   console.log('This is never called');
 });
-setTimeout(cbManager.getNewCallback(), 100);
+setTimeout(cbManager.registerCallback(), 100);
 setTimeout(function() {
   cbManager.abort();
 }, 50);
-```
-
----
-
-<a name="CallbackManager+getCount"></a>
-### callbackManager.getCount() ⇒ <code>number</code>
-Returns the number of intermediary callbacks currently being waited on.
-
-
-**Example**
-```js
-var cbManager = new CallbackManager(function() {
-  cbManager.getCount(); // -> 0
-});
-process.nextTick(cbManager.getNewCallback());
-cbManager.getCount(); // -> 1
-process.nextTick(cbManager.getNewCallback());
-cbManager.getCount(); // -> 2
-```
-
----
-
-<a name="CallbackManager+getNewCallback"></a>
-### callbackManager.getNewCallback() ⇒ <code>function</code>
-Returns an intermediary callback and increases the number of callbacks to
-wait for until original the callback can be invoked.
-
-**Returns**: <code>function</code> - An intermediary callback that, when invoked, decreases
-    the number of callbacks to wait for. If it is the last callback being
-    waited on, it invokes the original callback. If it is called with an
-    `Error` as the first argument, it invokes the original callback
-    immediately with the `Error`.  
-
-**Example**
-```js
-var cbManager = new CallbackManager(callback);
-process.nextTick(cbManager.getNewCallback());
-
-var cb = cbManager.getNewCallback();
-cb('error'); // Does nothing since a string is not an Error object
-
-var error = new Error();
-cb = cbManager.getNewCallback();
-cb(error); // Stops waiting for other callbacks and calls callback(error)
 ```
 
 ---

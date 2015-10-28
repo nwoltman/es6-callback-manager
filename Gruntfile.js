@@ -45,7 +45,6 @@ module.exports = function(grunt) {
             'jsdoc2md/partials/separator.hbs',
           ],
           separators: true,
-          'sort-by': ['name'],
           template: fs.readFileSync('jsdoc2md/README.hbs', {encoding: 'utf8'}),
         },
         src: 'es6-callback-manager.js',
