@@ -14,9 +14,9 @@
  *   if (err) throw err;
  *   console.log('Done!');
  * });
- * setTimeout(cbManager.getCallback(), 200);
- * setTimeout(cbManager.getCallback(), 100);
- * setTimeout(cbManager.getCallback(), 300);
+ * setTimeout(cbManager.getNewCallback(), 200);
+ * setTimeout(cbManager.getNewCallback(), 100);
+ * setTimeout(cbManager.getNewCallback(), 300);
  */
 function CallbackManager(callback) {
   var _this = this;
@@ -49,7 +49,7 @@ function CallbackManager(callback) {
  * var cbManager = new CallbackManager(function() {
  *   console.log('This is never called');
  * });
- * setTimeout(cbManager.getCallback(), 100);
+ * setTimeout(cbManager.getNewCallback(), 100);
  * setTimeout(function() {
  *   cbManager.abort();
  * }, 50);
@@ -69,16 +69,16 @@ CallbackManager.prototype.abort = function() {
  *     immediately with the `Error`.
  * @example
  * var cbManager = new CallbackManager(callback);
- * process.nextTick(cbManager.getCallback());
+ * process.nextTick(cbManager.getNewCallback());
  *
- * var cb = cbManager.getCallback();
+ * var cb = cbManager.getNewCallback();
  * cb('error'); // Does nothing since a string is not an Error object
  *
  * var error = new Error();
- * cb = cbManager.getCallback();
+ * cb = cbManager.getNewCallback();
  * cb(error); // Stops waiting for other callbacks and calls callback(error)
  */
-CallbackManager.prototype.getCallback = function() {
+CallbackManager.prototype.getNewCallback = function() {
   this._count++;
   return this._callback;
 };
@@ -91,9 +91,9 @@ CallbackManager.prototype.getCallback = function() {
  * var cbManager = new CallbackManager(function() {
  *   cbManager.getCount(); // -> 0
  * });
- * process.nextTick(cbManager.getCallback());
+ * process.nextTick(cbManager.getNewCallback());
  * cbManager.getCount(); // -> 1
- * process.nextTick(cbManager.getCallback());
+ * process.nextTick(cbManager.getNewCallback());
  * cbManager.getCount(); // -> 2
  */
 CallbackManager.prototype.getCount = function() {

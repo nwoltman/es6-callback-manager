@@ -23,8 +23,8 @@ npm install simple-callback-manager --save
 * [CallbackManager](#CallbackManager)
   * [new CallbackManager(callback)](#new_CallbackManager_new)
   * [.abort()](#CallbackManager+abort) ⇒ <code>void</code>
-  * [.getCallback()](#CallbackManager+getCallback) ⇒ <code>function</code>
   * [.getCount()](#CallbackManager+getCount) ⇒ <code>number</code>
+  * [.getNewCallback()](#CallbackManager+getNewCallback) ⇒ <code>function</code>
 
 
 ---
@@ -46,9 +46,9 @@ var cbManager = new CallbackManager(function(err) {
   if (err) throw err;
   console.log('Done!');
 });
-setTimeout(cbManager.getCallback(), 200);
-setTimeout(cbManager.getCallback(), 100);
-setTimeout(cbManager.getCallback(), 300);
+setTimeout(cbManager.getNewCallback(), 200);
+setTimeout(cbManager.getNewCallback(), 100);
+setTimeout(cbManager.getNewCallback(), 300);
 ```
 
 ---
@@ -64,36 +64,10 @@ invoked once all intermediary callbacks have been invoked.
 var cbManager = new CallbackManager(function() {
   console.log('This is never called');
 });
-setTimeout(cbManager.getCallback(), 100);
+setTimeout(cbManager.getNewCallback(), 100);
 setTimeout(function() {
   cbManager.abort();
 }, 50);
-```
-
----
-
-<a name="CallbackManager+getCallback"></a>
-### callbackManager.getCallback() ⇒ <code>function</code>
-Returns an intermediary callback and increases the number of callbacks to
-wait for until original the callback can be invoked.
-
-**Returns**: <code>function</code> - An intermediary callback that, when invoked, decreases
-    the number of callbacks to wait for. If it is the last callback being
-    waited on, it invokes the original callback. If it is called with an
-    `Error` as the first argument, it invokes the original callback
-    immediately with the `Error`.  
-
-**Example**
-```js
-var cbManager = new CallbackManager(callback);
-process.nextTick(cbManager.getCallback());
-
-var cb = cbManager.getCallback();
-cb('error'); // Does nothing since a string is not an Error object
-
-var error = new Error();
-cb = cbManager.getCallback();
-cb(error); // Stops waiting for other callbacks and calls callback(error)
 ```
 
 ---
@@ -108,10 +82,36 @@ Returns the number of intermediary callbacks currently being waited on.
 var cbManager = new CallbackManager(function() {
   cbManager.getCount(); // -> 0
 });
-process.nextTick(cbManager.getCallback());
+process.nextTick(cbManager.getNewCallback());
 cbManager.getCount(); // -> 1
-process.nextTick(cbManager.getCallback());
+process.nextTick(cbManager.getNewCallback());
 cbManager.getCount(); // -> 2
+```
+
+---
+
+<a name="CallbackManager+getNewCallback"></a>
+### callbackManager.getNewCallback() ⇒ <code>function</code>
+Returns an intermediary callback and increases the number of callbacks to
+wait for until original the callback can be invoked.
+
+**Returns**: <code>function</code> - An intermediary callback that, when invoked, decreases
+    the number of callbacks to wait for. If it is the last callback being
+    waited on, it invokes the original callback. If it is called with an
+    `Error` as the first argument, it invokes the original callback
+    immediately with the `Error`.  
+
+**Example**
+```js
+var cbManager = new CallbackManager(callback);
+process.nextTick(cbManager.getNewCallback());
+
+var cb = cbManager.getNewCallback();
+cb('error'); // Does nothing since a string is not an Error object
+
+var error = new Error();
+cb = cbManager.getNewCallback();
+cb(error); // Stops waiting for other callbacks and calls callback(error)
 ```
 
 ---
