@@ -50,24 +50,6 @@ class CallbackManager {
   }
 
   /**
-   * Aborts the callback sequence, preventing the original callback from being
-   * invoked once all intermediary callbacks have been invoked.
-   *
-   * @returns {void}
-   * @example
-   * var cbManager = new CallbackManager(function() {
-   *   console.log('This is never called');
-   * });
-   * setTimeout(cbManager.registerCallback(), 100);
-   * setTimeout(function() {
-   *   cbManager.abort();
-   * }, 50);
-   */
-  abort() {
-    this._count = 0;
-  }
-
-  /**
    * Returns an intermediary callback and increases the number of callbacks to
    * wait for until the original callback will be invoked.
    *
@@ -107,6 +89,24 @@ class CallbackManager {
    */
   getCount() {
     return this._count;
+  }
+
+  /**
+   * Aborts the callback sequence, preventing the original callback from being
+   * invoked once all intermediary callbacks have been invoked.
+   *
+   * @returns {void}
+   * @example
+   * var cbManager = new CallbackManager(function() {
+   *   console.log('This is never called');
+   * });
+   * setTimeout(cbManager.registerCallback(), 100);
+   * setTimeout(function() {
+   *   cbManager.abort();
+   * }, 50);
+   */
+  abort() {
+    this._count = 0;
   }
 }
 
