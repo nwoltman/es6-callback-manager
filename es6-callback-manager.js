@@ -10,7 +10,7 @@ class CallbackManager {
    *     callbacks is called with an `Error` as the first argument and is passed
    *     the `Error` object as the first argument.
    * @example
-   * var CallbackManager = require('simple-callback-manager');
+   * var CallbackManager = require('es6-callback-manager');
    * var cbManager = new CallbackManager(function(err) {
    *   if (err) throw err;
    *   console.log('Done!');

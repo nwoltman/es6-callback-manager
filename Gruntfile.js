@@ -48,7 +48,7 @@ module.exports = function(grunt) {
           'sort-by': ['name'],
           template: fs.readFileSync('jsdoc2md/README.hbs', {encoding: 'utf8'}),
         },
-        src: 'simple-callback-manager.js',
+        src: 'es6-callback-manager.js',
         dest: 'README.md',
       },
     },
