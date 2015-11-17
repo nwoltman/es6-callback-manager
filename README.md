@@ -20,7 +20,7 @@ npm install es6-callback-manager --save
 This module uses ECMAScript 2015 syntax (more widely known as ES6). If you need to use this module in an environment that only supports ES5 (such as a browser or an older version of Node.js), you'll need to transpile it from ES6 to ES5 using a transpiler such as [Babel](https://babeljs.io/).
 
 
-## API Reference
+# API Reference
 
 <a name="CallbackManager"></a>
 ## CallbackManager
