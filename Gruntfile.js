@@ -1,33 +1,45 @@
+/* eslint-disable camelcase, global-require */
+
 'use strict';
 
-var fs = require('fs');
-
 module.exports = function(grunt) {
+  require('jit-grunt')(grunt, {
+    jsdoc2md: 'grunt-jsdoc-to-markdown',
+  })({
+    customTasksDir: 'tasks',
+  });
+
   grunt.initConfig({
     eslint: {
       all: ['*.js', 'test/*.js'],
     },
 
-    mochacov: {
+    mochaTest: {
       test: {
-        options: {
-          reporter: 'spec',
-        },
+        src: 'test/*.js',
       },
+      options: {
+        colors: true,
+        require: 'should',
+      },
+    },
+
+    mocha_istanbul: {
       coverage: {
+        src: 'test/*.js',
         options: {
-          reporter: 'html-cov',
-          quiet: true,
-          output: 'coverage/coverage.html',
+          reportFormats: ['html'],
         },
       },
-      ciCoverage: {
+      coveralls: {
+        src: 'test/*.js',
         options: {
-          coveralls: true,
+          coverage: true,
+          reportFormats: ['lcovonly'],
         },
       },
       options: {
-        files: 'test/*.js',
+        mochaOptions: ['--colors'],
         require: 'should',
       },
     },
@@ -45,7 +57,7 @@ module.exports = function(grunt) {
             'jsdoc2md/partials/separator.hbs',
           ],
           separators: true,
-          template: fs.readFileSync('jsdoc2md/README.hbs', {encoding: 'utf8'}),
+          template: require('fs').readFileSync('jsdoc2md/README.hbs', 'utf8'),
         },
         src: 'es6-callback-manager.js',
         dest: 'README.md',
@@ -53,15 +65,13 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.loadNpmTasks('grunt-eslint');
-  grunt.loadNpmTasks('grunt-mocha-cov');
-  grunt.loadNpmTasks('grunt-jsdoc-to-markdown');
-
-  grunt.loadTasks('tasks');
+  grunt.event.on('coverage', (lcov, done) => {
+    require('coveralls').handleInput(lcov, done);
+  });
 
   grunt.registerTask('lint', ['eslint']);
-  grunt.registerTask('test', ['mochacov:test'].concat(process.env.CI ? [/* 'mochacov:ciCoverage' */] : []));
-  grunt.registerTask('coverage', ['mochacov:coverage']);
+  grunt.registerTask('test', [process.env.CI ? 'mocha_istanbul:coveralls' : 'mochaTest']);
+  grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('doc', ['jsdoc2md', 'fixdocs']);
   grunt.registerTask('default', ['lint', 'test']);
 };
