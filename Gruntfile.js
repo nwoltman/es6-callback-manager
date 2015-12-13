@@ -47,6 +47,7 @@ module.exports = function(grunt) {
     jsdoc2md: {
       docs: {
         options: {
+          'global-index-format': 'none',
           partial: [
             'jsdoc2md/partials/body.hbs',
             'jsdoc2md/partials/examples.hbs',
