@@ -14,10 +14,7 @@ A class for managing asynchronous callbacks in JavaScript
 npm install es6-callback-manager --save
 ```
 
-
-## Transpiling
-
-This module uses ECMAScript 2015 syntax (more widely known as ES6). If you need to use this module in an environment that only supports ES5 (such as a browser or an older version of Node.js), you'll need to transpile it from ES6 to ES5 using a transpiler such as [Babel](https://babeljs.io/).
+**Note:** Requires Node v4 or higher
 
 
 # API Reference
@@ -26,11 +23,11 @@ This module uses ECMAScript 2015 syntax (more widely known as ES6). If you need 
 ## CallbackManager
 
 * [CallbackManager](#CallbackManager)
-  * [new CallbackManager(callback)](#new_CallbackManager_new)
-  * [.callback](#CallbackManager+callback) : <code>function</code>
-  * [.registerCallback()](#CallbackManager+registerCallback) ⇒ <code>function</code>
-  * [.getCount()](#CallbackManager+getCount) ⇒ <code>number</code>
-  * [.abort()](#CallbackManager+abort) ⇒ <code>void</code>
+    * [new CallbackManager(callback)](#new_CallbackManager_new)
+    * [.callback](#CallbackManager+callback) : <code>function</code>
+    * [.registerCallback()](#CallbackManager+registerCallback) ⇒ <code>function</code>
+    * [.getCount()](#CallbackManager+getCount) ⇒ <code>number</code>
+    * [.abort()](#CallbackManager+abort) ⇒ <code>void</code>
 
 
 ---

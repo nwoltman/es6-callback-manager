@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A class for managing asynchronous callbacks in JavaScript",
   "main": "es6-callback-manager.js",
+  "engines": {
+    "node": ">=4"
+  },
   "files": [
     "es6-callback-manager.js",
     "LICENSE.txt"
@@ -29,7 +32,7 @@
   "homepage": "https://github.com/woollybogger/es6-callback-manager#readme",
   "devDependencies": {
     "coveralls": "^2.11.4",
-    "grunt": "^0.4.5",
+    "grunt": "~0.4.5",
     "grunt-eslint": "^17.3.1",
     "grunt-jsdoc-to-markdown": "^1.1.1",
     "grunt-mocha-istanbul": "^3.0.1",
@@ -37,6 +40,6 @@
     "istanbul": "^0.4.1",
     "jit-grunt": "^0.9.1",
     "mocha": "^2.3.4",
-    "should": "^7.1.1"
+    "should": "^8.0.1"
   }
 }
