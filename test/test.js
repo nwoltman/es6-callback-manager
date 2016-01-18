@@ -1,7 +1,6 @@
 'use strict';
 
 const CallbackManager = require('../');
-const assert = require('assert');
 
 describe('CallbackManager', () => {
 
@@ -15,11 +14,11 @@ describe('CallbackManager', () => {
     var cb3 = callbackManager.registerCallback();
 
     cb1();
-    called.should.equal(false);
+    called.should.be.false();
     cb2();
-    called.should.equal(false);
+    called.should.be.false();
     cb3();
-    called.should.equal(true);
+    called.should.be.true();
 
     called = false;
     cb1 = callbackManager.registerCallback();
@@ -27,9 +26,39 @@ describe('CallbackManager', () => {
 
     // Order doesn't matter
     cb2();
-    called.should.equal(false);
+    called.should.be.false();
     cb1();
-    called.should.equal(true);
+    called.should.be.true();
+  });
+
+  it('should wait for all generated callbacks to be invoked before invoking the provided callback, even when an error occurs', () => {
+    const error = new Error('test error');
+
+    var called = false;
+    var callbackManager = new CallbackManager(function(err) {
+      err.should.equal(error);
+      called = true;
+    });
+    var cb1 = callbackManager.registerCallback();
+    var cb2 = callbackManager.registerCallback();
+    var cb3 = callbackManager.registerCallback();
+
+    cb1();
+    called.should.be.false();
+    cb2(error);
+    called.should.be.false();
+    cb3();
+    called.should.be.true();
+
+    called = false;
+    cb1 = callbackManager.registerCallback();
+    cb2 = callbackManager.registerCallback();
+
+    // Order doesn't matter
+    cb2(error);
+    called.should.be.false();
+    cb1();
+    called.should.be.true();
   });
 
   it('should only invoke the provided callback once', () => {
@@ -50,7 +79,7 @@ describe('CallbackManager', () => {
     numCalls.should.equal(1);
   });
 
-  it('should invoke the callback when the first error occurs', done => {
+  it('should invoke the callback when the first error occurs if `stopOnError` is true', done => {
     var firstError = new Error('First');
     var otherError = new Error('Other');
 
@@ -59,7 +88,7 @@ describe('CallbackManager', () => {
         throw new Error('Did not call the callback immediately after the first error');
       }
       done();
-    });
+    }, true);
 
     process.nextTick(callbackManager.registerCallback());
     process.nextTick(callbackManager.registerCallback().bind(null, firstError));
@@ -115,7 +144,7 @@ describe('CallbackManager', () => {
     it('should not be modifiable', () => {
       function callback() {}
       var callbackManager = new CallbackManager(callback);
-      assert.throws(() => callbackManager.callback = 1, TypeError);
+      (() => callbackManager.callback = 1).should.throw(TypeError);
     });
 
   });
@@ -125,7 +154,7 @@ describe('CallbackManager', () => {
 
     it('should return a function', () => {
       var callbackManager = new CallbackManager(function() {});
-      callbackManager.registerCallback().should.be.a.type('function');
+      callbackManager.registerCallback().should.be.a.Function();
     });
 
   });

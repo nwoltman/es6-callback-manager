@@ -5,10 +5,12 @@ class CallbackManager {
    * Creates a new CallbackManager.
    *
    * @class CallbackManager
-   * @param {function} callback - The callback to invoke once all intermediary
-   *     callbacks have been invoked. Is invoked immediately if one of the
-   *     callbacks is called with an `Error` as the first argument and is passed
-   *     the `Error` object as the first argument.
+   * @param {function} callback - The callback to invoke once all registered
+   *     callbacks have been invoked. Is called with either `null` or the
+   *     first `Error` that occurred as the first argument.
+   * @param {boolean} [stopOnError=false] - If `true`, when an error is
+   *     encountered, the callback manager aborts and immediately invokes
+   *     `callback`.
    * @example
    * var CallbackManager = require('es6-callback-manager');
    * var cbManager = new CallbackManager(function(err) {
@@ -19,23 +21,29 @@ class CallbackManager {
    * setTimeout(cbManager.registerCallback(), 100);
    * setTimeout(cbManager.registerCallback(), 300);
    */
-  constructor(callback) {
+  constructor(callback, stopOnError) {
     this._callback = callback;
     this._count = 0;
 
-    this._intermediaryCallback = error => {
+    var error = null;
+
+    this._intermediaryCallback = err => {
       if (this._count === 0) {
         return;
       }
 
-      if (error && error instanceof Error) {
-        this.abort();
-        callback(error);
-        return;
+      if (err && err instanceof Error) {
+        if (stopOnError) {
+          this.abort();
+          callback(err);
+          return;
+        }
+        error = error || err;
       }
 
       if (--this._count === 0) {
-        callback(null);
+        callback(error);
+        error = null;
       }
     };
   }
@@ -56,8 +64,8 @@ class CallbackManager {
    * @returns {function} An intermediary callback that, when invoked, decreases
    *     the number of callbacks to wait for. If it is the last callback being
    *     waited on, it invokes the original callback. If it is called with an
-   *     `Error` as the first argument, it invokes the original callback
-   *     immediately with the `Error`.
+   *     `Error` as the first argument, the original callback will be invoked
+   *     with the `Error`.
    * @example
    * var cbManager = new CallbackManager(callback);
    * process.nextTick(cbManager.registerCallback());
@@ -67,7 +75,7 @@ class CallbackManager {
    *
    * var error = new Error();
    * cb = cbManager.registerCallback();
-   * cb(error); // Stops waiting for other callbacks and calls callback(error)
+   * cb(error); // The original callback will be called with this error
    */
   registerCallback() {
     this._count++;

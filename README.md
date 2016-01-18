@@ -23,7 +23,7 @@ npm install es6-callback-manager --save
 ## CallbackManager
 
 * [CallbackManager](#CallbackManager)
-    * [new CallbackManager(callback)](#new_CallbackManager_new)
+    * [new CallbackManager(callback, [stopOnError])](#new_CallbackManager_new)
     * [.callback](#CallbackManager+callback) : <code>function</code>
     * [.registerCallback()](#CallbackManager+registerCallback) ⇒ <code>function</code>
     * [.getCount()](#CallbackManager+getCount) ⇒ <code>number</code>
@@ -33,13 +33,14 @@ npm install es6-callback-manager --save
 ---
 
 <a name="new_CallbackManager_new"></a>
-### new CallbackManager(callback)
+### new CallbackManager(callback, [stopOnError])
 Creates a new CallbackManager.
 
 
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>function</code> | The callback to invoke once all intermediary     callbacks have been invoked. Is invoked immediately if one of the     callbacks is called with an `Error` as the first argument and is passed     the `Error` object as the first argument. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| callback | <code>function</code> |  | The callback to invoke once all registered     callbacks have been invoked. Is called with either `null` or the     first `Error` that occurred as the first argument. |
+| [stopOnError] | <code>boolean</code> | <code>false</code> | If `true`, when an error is     encountered, the callback manager aborts and immediately invokes     `callback`. |
 
 
 **Example**
@@ -71,8 +72,8 @@ wait for until the original callback will be invoked.
 **Returns**: <code>function</code> - An intermediary callback that, when invoked, decreases
     the number of callbacks to wait for. If it is the last callback being
     waited on, it invokes the original callback. If it is called with an
-    `Error` as the first argument, it invokes the original callback
-    immediately with the `Error`.  
+    `Error` as the first argument, the original callback will be invoked
+    with the `Error`.  
 
 **Example**
 ```js
@@ -84,7 +85,7 @@ cb('error'); // Does nothing since a string is not an Error object
 
 var error = new Error();
 cb = cbManager.registerCallback();
-cb(error); // Stops waiting for other callbacks and calls callback(error)
+cb(error); // The original callback will be called with this error
 ```
 
 ---
