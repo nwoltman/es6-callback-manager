@@ -144,7 +144,9 @@ describe('CallbackManager', () => {
     it('should not be modifiable', () => {
       function callback() {}
       var callbackManager = new CallbackManager(callback);
-      (() => callbackManager.callback = 1).should.throw(TypeError);
+      (function() {
+        callbackManager.callback = 1;
+      }).should.throw(TypeError);
     });
 
   });
