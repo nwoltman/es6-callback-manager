@@ -14,12 +14,13 @@ A class for managing asynchronous callbacks in JavaScript
 npm install es6-callback-manager --save
 ```
 
-**Note:** Requires Node v4 or higher
+**Note:** Requires Node v4 or higher (or transformation to ES5 with [Babel](https://babeljs.io/))
 
 
 # API Reference
 
 <a name="CallbackManager"></a>
+
 ## CallbackManager
 
 * [CallbackManager](#CallbackManager)
@@ -33,6 +34,7 @@ npm install es6-callback-manager --save
 ---
 
 <a name="new_CallbackManager_new"></a>
+
 ### new CallbackManager(callback, [stopOnError])
 Creates a new CallbackManager.
 
@@ -58,6 +60,7 @@ setTimeout(cbManager.registerCallback(), 300);
 ---
 
 <a name="CallbackManager+callback"></a>
+
 ### callbackManager.callback : <code>function</code>
 The callback passed to the constructor. Is read-only.
 
@@ -65,6 +68,7 @@ The callback passed to the constructor. Is read-only.
 ---
 
 <a name="CallbackManager+registerCallback"></a>
+
 ### callbackManager.registerCallback() ⇒ <code>function</code>
 Returns an intermediary callback and increases the number of callbacks to
 wait for until the original callback will be invoked.
@@ -91,6 +95,7 @@ cb(error); // The original callback will be called with this error
 ---
 
 <a name="CallbackManager+getCount"></a>
+
 ### callbackManager.getCount() ⇒ <code>number</code>
 Returns the number of intermediary callbacks currently being waited on.
 
@@ -109,6 +114,7 @@ cbManager.getCount(); // -> 2
 ---
 
 <a name="CallbackManager+abort"></a>
+
 ### callbackManager.abort() ⇒ <code>void</code>
 Aborts the callback sequence, preventing the original callback from being
 invoked once all intermediary callbacks have been invoked.
