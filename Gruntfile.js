@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       },
       options: {
         colors: true,
-        require: 'should',
+        require: ['should'],
       },
     },
 
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
       },
       options: {
         mochaOptions: ['--colors'],
-        require: 'should',
+        require: ['should'],
       },
     },
 
