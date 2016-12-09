@@ -40,7 +40,7 @@ Creates a new CallbackManager.
 
 
 | Param | Type | Default | Description |
-| --- | --- | --- | --- |
+|:--- |:--- |:--- |:--- |
 | callback | <code>function</code> |  | The callback to invoke once all registered     callbacks have been invoked. Is called with either `null` or the     first `Error` that occurred as the first argument. |
 | [stopOnError] | <code>boolean</code> | <code>false</code> | If `true`, when an error is     encountered, the callback manager aborts and immediately invokes     `callback`. |
 
