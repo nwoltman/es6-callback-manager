@@ -4,8 +4,8 @@ A class for managing asynchronous callbacks in JavaScript
 
 [![NPM Version](https://img.shields.io/npm/v/es6-callback-manager.svg)](https://www.npmjs.com/package/es6-callback-manager)
 [![Build Status](https://travis-ci.org/nwoltman/es6-callback-manager.svg?branch=master)](https://travis-ci.org/nwoltman/es6-callback-manager)
-[![Coverage Status](https://coveralls.io/repos/nwoltman/es6-callback-manager/badge.svg?branch=master)](https://coveralls.io/r/nwoltman/es6-callback-manager?branch=master)
-[![devDependency Status](https://david-dm.org/nwoltman/es6-callback-manager/dev-status.svg)](https://david-dm.org/nwoltman/es6-callback-manager#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/github/nwoltman/es6-callback-manager/badge.svg?branch=master)](https://coveralls.io/github/nwoltman/es6-callback-manager?branch=master)
+[![devDependencies Status](https://david-dm.org/nwoltman/es6-callback-manager/dev-status.svg)](https://david-dm.org/nwoltman/es6-callback-manager?type=dev)
 
 
 ## Installation
